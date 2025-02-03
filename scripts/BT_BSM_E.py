@@ -6,39 +6,34 @@ model.
 import numpy as np
 
 # model params
-T = 3 # duration
+T = 1 # duration
 r = .05 # risk-free interest rate
-q = .0 # dividend rate
+q = .02 # dividend rate
 sig = .2 # volatility
 # model initial conditions
-S0 = 100
+S0 = 90
 # options params
-K = 130 # strike price
+K = 100 # strike price
 style = 'put'
 # numerical params
-N = 1000 # binomial tree depth
+N_bt = 4000 # binomial tree depth
 
 assert style in ('call', 'put')
 
-dt = T/N
+dt = T/N_bt
 u = np.exp(sig*dt**.5)
 d = np.exp(-sig*dt**.5)
 p = (np.exp((r-q)*dt)-d)/(u-d)
-q = 1-p
-
-def gen_tree(n):
-  S = [S0*u**(n-i)*d**i for i in range(n+1)]
-  if n == N:
-    V = [max(S[i]-K, 0) if style == 'call' else max(K-S[i], 0) for i in range(n+1)]
-    return S, V
-  return S
-
-S_old, V_old = gen_tree(N)
-for i in range(N-1, -1, -1):
-  S_new = gen_tree(i)
-  V_new = [(p*V_old[j]+q*V_old[j+1])*np.exp(-r*dt) for j in range(i+1)]
-  S_old, V_old = S_new, V_new
-V0 = V_new[0]
+V0, V1 = np.zeros((2, N_bt+1))
+n_up = np.arange(N_bt+1)
+S = S0*u**n_up*d**(N_bt-n_up)
+V1 = np.maximum(0, S-K if style == 'call' else K-S)
+for i_layer in range(N_bt-1, -1, -1):
+  V0, V1 = V1, V0
+  n_up = np.arange(i_layer+1)
+  S = S0*u**n_up*d**(i_layer-n_up)
+  V1 = np.exp(-r*dt)*(p*V0[1:]+(1-p)*V0[:-1])
+V0 = V1[0]
 
 print(style)
 print(f'V0 {V0:.4e}')

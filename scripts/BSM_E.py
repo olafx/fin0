@@ -7,15 +7,15 @@ import numpy as np
 from scipy.stats import norm
 
 # model params
-T = 3 # duration
+T = 1 # duration
 r = .05 # risk free interest rate
-q = .0 # dividend rate
+q = .02 # dividend rate
 sigma = .2 # volatility
 # model initial condition
-S0 = 100 # initial spot price
+S0 = 90 # initial spot price
 # option params
-K = 130 # strike price
-style = 'call' # call or put
+K = 100 # strike price
+style = 'put' # call or put
 
 assert style in ('call', 'put')
 Phi = norm.cdf
