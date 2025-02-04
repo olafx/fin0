@@ -34,22 +34,22 @@ V = np.maximum(0, (S-K) if style == 'call' else (K-S))
 plt.figure('Black-Scholes PDE')
 plt.plot(S, V, c='black')
 
-# Neumann boundary condition: fix Gamma to 0, and Delta to 0, -1, or 1.
 for i in range(n_t):
+# Centered difference in space.
   Delta = (V[2:]-V[:-2])/(2*dS)
   Gamma = (V[2:]-2*V[1:-1]+V[:-2])/dS
-  if style == 'call':
-    V[0] -= dt*(r*V[0]) # Delta 0
-    V[-1] -= dt*(-r*S[-1]+r*V[-1]) # Delta 1
-  else:
-    V[0] -= dt*(r*S[0]+r*V[0]) # Delta -1
-    V[-1] -= dt*(r*V[-1]) # Delta 0
+  match style: # Neumann boundary condition
+    case 'call': # L: Delta=0, R: Delta=1
+      V[0] -= dt*(r*V[0])
+      V[-1] -= dt*(-r*S[-1]+r*V[-1])
+    case 'put': # L: Delta=-1, R: Delta=0
+      V[0] -= dt*(r*S[0]+r*V[0])
+      V[-1] -= dt*(r*V[-1])
+# Forward Euler in time.
   V[1:-1] -= dt*(-sigma**2*S[1:-1]**2/2*Gamma-r*S[1:-1]*Delta+r*V[1:-1])
 
 print(f'V0 {interpolate.CubicSpline(S, V)(S0):.4e}')
 plt.xlim(S[0], S[-1])
-# plt.xlim(0, 150)
-# plt.ylim(0, 100)
 plt.plot(S, V, c='red')
 plt.tight_layout()
 plt.show()

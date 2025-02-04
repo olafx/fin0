@@ -8,7 +8,7 @@ import numpy as np
 # model params
 T = 1 # duration
 r = .05 # risk-free interest rate
-q = .0 # dividend rate
+q = .02 # dividend rate
 sig = .2 # volatility
 # model initial conditions
 S0 = 90

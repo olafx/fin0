@@ -19,6 +19,7 @@ S0 = 100 # initial spot price
 S = np.zeros((N, n))
 S[:,0] = S0
 
+# Updating the stock price directly, which is not a terribly good idea.
 for j in range(N):
   for i in range(1, n):
     S[j,i] = S[j,i-1]*(1+(r-q)*T/n+sigma*(T/n)**.5*np.random.randn())
