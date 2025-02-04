@@ -4,7 +4,8 @@ options. This introduces a fictitious interest rate lambda, which may be
 positive or negative, so that the option on average expires at the money. This
 improves efficiency since more samples should be taken where the derivative in
 the price according to all parameters involved (model and option) is high, which
-for European options is in the neighborhood of the strike price.
+for European options is in the neighborhood of the strike price. Additionally,
+the method of antithetic variates is used to further reduce variance.
 '''
 
 import numpy as np
@@ -28,13 +29,15 @@ lam = np.log(K/S0)/(sig*T)-r/sig+sig/2
 
 dt = T/n
 V0 = 0
-for j in range(N):
+for j in range(N//2):
 # Calculating the entire path in case it is needed, more general this way.
-  dWt = np.random.normal(size=n)*dt**.5
-  WT = np.sum(dWt)
-  ST = S0*np.exp((r-q-sig**2/2+sig*lam)*T+sig*WT)
-  weight = np.exp(-lam*WT-lam**2*T/2)
-  V0 += max(0, ST-K if style == 'call' else K-ST)*weight
+  dWt_ = np.random.normal(size=n)*dt**.5
+  for s in (-1, +1):
+    dWt = s*dWt_
+    WT = np.sum(dWt)
+    ST = S0*np.exp((r-q-sig**2/2+sig*lam)*T+sig*WT)
+    weight = np.exp(-lam*WT-lam**2*T/2)
+    V0 += max(0, ST-K if style == 'call' else K-ST)*weight
 V0 *= np.exp(-r*T)/N
 
 print(f'lam {lam:.4e}')
