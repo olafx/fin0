@@ -12,7 +12,7 @@ n = 500 # number of steps per run
 T = 3 # duration
 r = 0.06 # risk free interest rate
 q = 0.02 # dividend rate
-sigma = .4 # volatility
+sig = .4 # volatility
 # model initial condition
 S0 = 100 # initial spot price
 
@@ -22,7 +22,7 @@ S[:,0] = S0
 # Updating the stock price directly, which is not a terribly good idea.
 for j in range(N):
   for i in range(1, n):
-    S[j,i] = S[j,i-1]*(1+(r-q)*T/n+sigma*(T/n)**.5*np.random.randn())
+    S[j,i] = S[j,i-1]*(1+(r-q)*T/n+sig*(T/n)**.5*np.random.randn())
 
 ts = np.linspace(0, T, n)
 S_mean = np.mean(S, axis=0)

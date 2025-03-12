@@ -11,12 +11,12 @@ n = 500 # number of steps per run
 # model params
 T = 3 # duration
 eta = .4 # level of mean reversion
-kappa = 1 # spread of mean reversion
-theta = .2 # vol-of-vol
+kap = 1 # spread of mean reversion
+th = .2 # vol-of-vol
 # model initial condition
 v0 = .2 # initial volatility
 
-print(f'Feller condition:{"" if 2*kappa*eta >= theta**2 else " not"} satisfied')
+print(f'Feller condition:{"" if 2*kap*eta >= th**2 else " not"} satisfied')
 
 v = np.zeros((N, n))
 v[:,0] = v0
@@ -24,7 +24,8 @@ v[:,0] = v0
 k = 0
 for j in range(N):
   for i in range(1, n):
-    v[j,i] = v[j,i-1]+kappa*(eta-v[j,i-1])*T/n+theta*(v[j,i-1]*T/n)**.5*np.random.randn()
+    x = np.random.randn()
+    v[j,i] = v[j,i-1]+kap*(eta-v[j,i-1])*T/n+th*(v[j,i-1]*T/n)**.5*x
     if v[j,i] < 0:
       v[j,i] *= -1
       k += 1

@@ -15,16 +15,17 @@ q = 0.02 # dividend rate
 eta = .4 # level of mean reversion
 kappa = 1 # spread of mean reversion
 theta = .2 # vol-of-vol
-rho = -.3 # correlation
+rho = -.3 # vol-stock correlation
 # model initial condition
 S0 = 100 # initial spot price
-v0 = .2 # initial volatility
+sig0 = .2 # initial volatility
 
-print(f'Feller condition:{"" if 2*kappa*eta >= theta**2 else " not"} satisfied')
+Feller_cond = 2*kappa*eta >= theta**2
+print(f'Feller condition:{'' if Feller_cond else ' not'} satisfied')
 
 S, v = np.zeros((2, N, n))
 S[:,0] = S0
-v[:,0] = v0
+v[:,0] = sig0**2
 
 k = 0
 for j in range(N):
@@ -37,7 +38,7 @@ for j in range(N):
       v[j,i] *= -1
       k += 1
 
-print(f'negative volatility rate: {k/(n*N):.2e}')
+print(f'negative volatility rate: {k/(n*N):.4f}')
 
 ts = np.linspace(0, T, n)
 plt.figure('Heston')
