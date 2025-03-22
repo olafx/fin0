@@ -1,31 +1,28 @@
 '''
-A Heston model Monte Carlo simulation to price European options with importance
+Heston model Monte Carlo simulation to price European options, with importance
 sampling.
 '''
 
 import numpy as np
 
 # numerical params
-N = 40000 # number of runs
-n = 500 # number of steps per run
+N = int(4e4) # number of runs
+n = 200 # number of steps per run
 # model params
 T = 1 # duration
 r = .05 # risk free interest rate
 q = .02 # dividend rate
 eta = .04 # level of mean reversion
 kap = 1 # spread of mean reversion
-th = .1 # vol-of-vol
+th = .1 # vol-of-vol (vol-of-var)
 rho = -.3 # vol-stock correlation
-# model initial condition
 S0 = 120 # initial spot price
 sig0 = .2 # initial volatility
 # option params
 K = 100 # strike price
-style = 'call'
+style = 'call' # call or put
 
-Feller_cond = 2*kap*eta >= th**2
-print(f'Feller condition:{'' if Feller_cond else ' not'} satisfied')
-# The feller condition should not be taken very seriously if lambda is not 0.
+assert style in ('call', 'put')
 
 lam = -.7
 
@@ -48,8 +45,10 @@ for i in range(N):
   V0s += [RN*max(0, S-K if style == 'call' else K-S)]
 V0 = np.mean(V0s)*np.exp(-r*T)
 var_V0 = np.var(V0s)*np.exp(-2*r*T)
+se_V0 = (var_V0/N)**.5
 
-print(f'lam {lam:.4e}')
-print(f'negative volatility rate: {n_reflection/(n*N):.4f}')
-print(f'V0 {V0:.4e}')
-print(f'var V0 {var_V0:.4e}')
+Feller_cond = 2*kap*eta >= th**2
+print(f'Feller condition{'' if 2*kap*eta >= th**2 else ' not'} satisfied')
+print(f'vol < 0 rate {n_reflection/(n*N):.2e}')
+print(f'lam {lam:+.4e}')
+print(f'V0 {V0:.4e} (s.e. {se_V0:.4e})')

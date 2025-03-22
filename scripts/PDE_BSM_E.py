@@ -3,53 +3,61 @@ The Black-Scholes PDE, to price European calls and puts.
 
 FTCS PDE integration scheme is used, but backward Euler naturally.
 A Neumann boundary condition is used, fixing the values to those of the
-initial condition at expiry.
+initial condition at expiry. Von Neumann stability analysis is performed.
 '''
 
 import numpy as np
-from scipy import interpolate
+from scipy.interpolate import CubicSpline
 import matplotlib.pyplot as plt
+from pathlib import Path
+from os import makedirs
+
+makedirs(Path.cwd().parent/'out', exist_ok=True)
+plt.rcParams['font.size'] = 14
+plt.rcParams['figure.figsize'] = (5, 4)
+plt.rcParams['text.usetex'] = True
 
 # numerical params
-n_S = 1001 # number of spot prices (should be odd ideally, so that it contains S0)
-n_t = 300000 # number of time steps
+n_S = 301 # number of spot prices (should be odd ideally, so that it contains S0)
+n_t = 100000 # number of time steps
 a = 3 # scale factor for S range
 # model params
 T = 3 # duration
 r = .05 # risk free interest rate
-sigma = .4 # volatility
-# model initial condition
+sig = .4 # volatility
 S0 = 100 # initial spot price
 # option params
 K = 70 # strike price
 style = 'call' # call or put
 
-t = np.linspace(0, T, n_t)
+assert style in ('call', 'put')
+
 dt = T/(n_t-1)
-
-S = S0+np.linspace(-1, 1, n_S)*S0*sigma*T*a
-dS = 2/(n_S-1)*S0*sigma*T*a
-V = np.maximum(0, (S-K) if style == 'call' else (K-S))
-
-plt.figure('Black-Scholes PDE')
-plt.plot(S, V, c='black')
-
+t = np.linspace(0, T, n_t)
+S0s = S0+np.linspace(-1, 1, n_S)*S0*sig*T*a
+dS0 = 2/(n_S-1)*S0*sig*T*a
+stable = dt <= dS0**2/(S0s[-1]*sig)**2
+assert stable
+V0 = np.maximum(0, (S0s-K) if style == 'call' else (K-S0s))
+plt.plot(S0s, V0, c='black')
 for i in range(n_t):
 # Centered difference in space.
-  Delta = (V[2:]-V[:-2])/(2*dS)
-  Gamma = (V[2:]-2*V[1:-1]+V[:-2])/dS
+  Delta = (V0[2:]-V0[:-2])/(2*dS0)
+  Gamma = (V0[2:]-2*V0[1:-1]+V0[:-2])/dS0
   match style: # Neumann boundary condition
     case 'call': # L: Delta=0, R: Delta=1
-      V[0] -= dt*(r*V[0])
-      V[-1] -= dt*(-r*S[-1]+r*V[-1])
+      V0[0] -= dt*(r*V0[0])
+      V0[-1] -= dt*(-r*S0s[-1]+r*V0[-1])
     case 'put': # L: Delta=-1, R: Delta=0
-      V[0] -= dt*(r*S[0]+r*V[0])
-      V[-1] -= dt*(r*V[-1])
+      V0[0] -= dt*(r*S0s[0]+r*V0[0])
+      V0[-1] -= dt*(r*V0[-1])
 # Forward Euler in time.
-  V[1:-1] -= dt*(-sigma**2*S[1:-1]**2/2*Gamma-r*S[1:-1]*Delta+r*V[1:-1])
+  V0[1:-1] -= dt*(-sig**2*S0s[1:-1]**2/2*Gamma-r*S0s[1:-1]*Delta+r*V0[1:-1])
 
-print(f'V0 {interpolate.CubicSpline(S, V)(S0):.4e}')
-plt.xlim(S[0], S[-1])
-plt.plot(S, V, c='red')
+print(f'V0 {CubicSpline(S0s, V0)(S0):.4e}')
+plt.plot(S0s, V0, c='red')
+plt.xlim(S0s[0], S0s[-1])
+plt.xlabel('$S_0$')
+plt.ylabel('$V_0$')
 plt.tight_layout()
-plt.show()
+plt.savefig(Path.cwd().parent/'out'/'PDE_BSM_E.png', bbox_inches='tight', dpi=400)

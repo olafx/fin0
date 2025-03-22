@@ -1,5 +1,6 @@
 '''
-Heston model Monte Carlo simulation to price European options.
+Heston model Monte Carlo simulation to price European options, with importance
+sampling.
 '''
 
 import numpy as np
@@ -23,25 +24,34 @@ style = 'call' # call or put
 
 assert style in ('call', 'put')
 
+lam1 = -.7
+lam2 = 0
+
 dt = T/n
 V0s = []
 n_reflection = 0
 for i in range(N):
-  S, v = S0, sig0**2
+  S, v, W1, W2 = S0, sig0**2, 0, 0
   for j in range(n):
     x1, x2 = np.random.randn(2)
+    W1 += x1; W2 += x2
     x3 = rho*x1+(1-rho**2)**.5*x2
-    S *= 1+(r-q)*dt+(v*dt)**.5*x1
-    v += kap*(eta-v)*dt+th*(v*dt)**.5*x3
+    S *= 1+(r-q-lam1*v**.5)*dt+(v*dt)**.5*x1
+    v += (kap*(eta-v)-th*v**.5*(rho*lam1+(1-rho**2)**.5*lam2))*dt+th*(v*dt)**.5*x3
     if v < 0:
       v *= -1
       n_reflection += 1
-  V0s += [max(0, S-K if style == 'call' else K-S)]
+  W1 *= dt**.5; W2 *= dt**.5
+  RN = np.exp(lam1*W1+lam2*W2-(lam1**2+lam2**2)*T/2)
+  V0s += [RN*max(0, S-K if style == 'call' else K-S)]
 V0 = np.mean(V0s)*np.exp(-r*T)
 var_V0 = np.var(V0s)*np.exp(-2*r*T)
 se_V0 = (var_V0/N)**.5
 
+# The feller condition should not be taken very seriously if lam_2 != 0.
 Feller_cond = 2*kap*eta >= th**2
 print(f'Feller condition:{'' if Feller_cond else ' not'} satisfied')
 print(f'vol < 0 rate {n_reflection/(n*N):.2e}')
+print(f'lam1 {lam1:+.4e}')
+print(f'lam2 {lam2:+.4e}')
 print(f'V0 {V0:.4e} (s.e. {se_V0:.4e})')

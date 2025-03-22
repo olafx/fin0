@@ -10,8 +10,7 @@ T = 1 # duration
 r = .05 # risk-free interest rate
 q = .02 # dividend rate
 sig = .2 # volatility
-# model initial conditions
-S0 = 90
+S0 = 90 # initial spot price
 # options params
 K = 100 # strike price
 style = 'put'
@@ -35,5 +34,4 @@ for i_layer in range(N_bt-1, -1, -1):
   V1 = np.exp(-r*dt)*(p*V0[1:]+(1-p)*V0[:-1])
 V0 = V1[0]
 
-print(style)
 print(f'V0 {V0:.4e}')
