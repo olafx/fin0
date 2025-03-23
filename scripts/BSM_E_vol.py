@@ -14,6 +14,8 @@ plt.rcParams['font.size'] = 14
 plt.rcParams['figure.figsize'] = (5, 4)
 plt.rcParams['text.usetex'] = True
 
+# plot params
+plot_save = False
 # model params
 T = 3 # duration
 r = 0.06 # risk free interest rate
@@ -52,4 +54,5 @@ plt.ylim(V0s[0], V0s[-1])
 plt.xlabel(R'$\sigma$')
 plt.ylabel(R'$V_0$')
 plt.tight_layout()
-plt.savefig(Path.cwd().parent/'out'/'BSM_E_vol.png', bbox_inches='tight', dpi=400)
+if plot_save: plt.savefig(Path.cwd().parent/'out'/'BSM_E_vol.png', bbox_inches='tight', dpi=400)
+else: plt.show()

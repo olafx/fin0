@@ -17,6 +17,8 @@ plt.rcParams['font.size'] = 14
 plt.rcParams['figure.figsize'] = (5, 4)
 plt.rcParams['text.usetex'] = True
 
+# plot params
+plot_save = False
 # numerical params
 n_S = 301 # number of spot prices (should be odd ideally, so that it contains S0)
 n_t = 100000 # number of time steps
@@ -60,4 +62,5 @@ plt.xlim(S0s[0], S0s[-1])
 plt.xlabel('$S_0$')
 plt.ylabel('$V_0$')
 plt.tight_layout()
-plt.savefig(Path.cwd().parent/'out'/'PDE_BSM_E.png', bbox_inches='tight', dpi=400)
+if plot_save: plt.savefig(Path.cwd().parent/'out'/'PDE_BSM_E.png', bbox_inches='tight', dpi=400)
+else: plt.show()

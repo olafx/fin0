@@ -15,6 +15,8 @@ plt.rcParams['font.size'] = 14
 plt.rcParams['figure.figsize'] = (5, 4)
 plt.rcParams['text.usetex'] = True
 
+# plot params
+plot_save = False
 # numerical params
 N = 8 # runs per method
 n1 = 1000 # number of steps per run for 1st method
@@ -46,4 +48,5 @@ plt.xlabel(R'$t$')
 plt.ylabel(R'$N_t$')
 plt.legend()
 plt.tight_layout()
-plt.savefig(Path.cwd().parent/'out'/'MC_Poisson.png', bbox_inches='tight', dpi=400)
+if plot_save: plt.savefig(Path.cwd().parent/'out'/'MC_Poisson.png', bbox_inches='tight', dpi=400)
+else: plt.show()

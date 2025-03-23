@@ -14,6 +14,8 @@ plt.rcParams['font.size'] = 14
 plt.rcParams['figure.figsize'] = (5, 4)
 plt.rcParams['text.usetex'] = True
 
+# plot params
+plot_save = False
 # numerical params
 N_S0 = 100 # number of initial spot prices
 N_bt = 2000 # binomial tree depth
@@ -71,4 +73,5 @@ plt.xlabel(R'$S_0$')
 plt.ylabel(R'$V_0$')
 plt.legend()
 plt.tight_layout()
-plt.savefig(Path.cwd().parent/'out'/'BT_BSM_AE.png', bbox_inches='tight', dpi=400)
+if plot_save: plt.savefig(Path.cwd().parent/'out'/'BT_BSM_AE.png', bbox_inches='tight', dpi=400)
+else: plt.show()

@@ -32,11 +32,11 @@ n_reflection = 0
 for i in range(N):
   S, v, W1, W2 = S0, sig0**2, 0, 0
   for j in range(n):
-    x1, x2 = np.random.randn(2)
+    x1, x2 = np.random.normal(size=2)
     W1 += x1; W2 += x2
     x3 = rho*x1+(1-rho**2)**.5*x2
     S *= 1+(r-q-lam*v**.5)*dt+(v*dt)**.5*x1
-    v += kap*(eta-v)*dt+th*(v*dt)**.5*x3
+    v += kap*(eta-v)*dt+th*(v*dt)**.5*x3+.25*th**2*(x3**2-1)*dt
     if v < 0:
       v *= -1
       n_reflection += 1

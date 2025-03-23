@@ -12,6 +12,8 @@ plt.rcParams['font.size'] = 14
 plt.rcParams['figure.figsize'] = (5, 4)
 plt.rcParams['text.usetex'] = True
 
+# plot params
+plot_save = False
 # numerical params
 N = 32 # number of runs
 n = 500 # number of steps per run
@@ -43,4 +45,5 @@ plt.xlim(0, T)
 plt.xlabel(R'$t$')
 plt.ylabel(R'$\nu_t$')
 plt.tight_layout()
-plt.savefig(Path.cwd().parent/'out'/'MC_CIR.png', bbox_inches='tight', dpi=400)
+if plot_save: plt.savefig(Path.cwd().parent/'out'/'MC_CIR.png', bbox_inches='tight', dpi=400)
+else: plt.show()

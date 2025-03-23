@@ -12,6 +12,8 @@ plt.rcParams['font.size'] = 14
 plt.rcParams['figure.figsize'] = (5, 4)
 plt.rcParams['text.usetex'] = True
 
+# plot params
+plot_save = False
 # numerical params
 N = 100 # number of runs
 n = 1000 # number of steps per run
@@ -39,11 +41,12 @@ plt.xlim(0, T)
 plt.xlabel(R'$t$')
 plt.ylabel(R'$X_t$')
 plt.tight_layout()
-plt.savefig(Path.cwd().parent/'out'/'MC_BG_1.png', bbox_inches='tight', dpi=400)
+if plot_save: plt.savefig(Path.cwd().parent/'out'/'MC_BG_1.png', bbox_inches='tight', dpi=400)
 plt.figure(2)
 plt.xlim(0, T)
 plt.plot(t, S.T)
 plt.xlabel(R'$t$')
 plt.ylabel(R'$S_t$')
 plt.tight_layout()
-plt.savefig(Path.cwd().parent/'out'/'MC_BG_2.png', bbox_inches='tight', dpi=400)
+if plot_save: plt.savefig(Path.cwd().parent/'out'/'MC_BG_2.png', bbox_inches='tight', dpi=400)
+else: plt.show()
