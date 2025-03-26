@@ -14,7 +14,7 @@ sig = .2 # volatility
 S0 = 90 # initial spot price
 # option params
 K = 100 # strike price
-style = 'put' # call or put
+style = 'call' # call or put
 
 assert style in ('call', 'put')
 Phi = normal.cdf

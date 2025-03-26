@@ -27,7 +27,7 @@ Includes:
 ## Some notes
 
 While not necessary, full paths are always generated in Monte Carlo simulations for pricing, so that path-dependent options may be priced also.  
-Scripts should be ran from within scripts.  
+Scripts should be ran from within this directory.  
 Plots are written to the out folder in this directory.
 
 ## Some plots

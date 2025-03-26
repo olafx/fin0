@@ -12,16 +12,16 @@ alp = 1.5 # alpha, see Carr-Madan paper
 eta = .25 # eta, see Carr-Madan paper
 # model params
 T = 1 # duration
-r = 0.06 # risk free interest rate
-q = 0.03 # dividend yield
+r = .05 # risk free interest rate
+q = .02 # dividend yield
 al1 = 1.18 # alpha^+
 lam1 = 10.57 # lambda^+
 al2 = 1.44 # alpha^-
 lam2 = 5.57 # lambda^-
 S0 = 100 # initial spot price
 # option params
-K = 80 # strike price
-style = 'put' # call or put
+K = 100 # strike price
+style = 'call' # call or put
 
 assert style in ('call', 'put')
 
